@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 #version="1.3.0"
 REV="T_RELEASE_latest" # means git rev/branch/tag
-REPO_URL='https://github.com/Freifunk-Dresden/ffdd-server'
+REPO_URL='https://github.com/Infinity666/ffrz-server'
 #
-INSTALL_DIR='/srv/ffdd-server'
+INSTALL_DIR='/srv/ffrz-server'
 INIT_DATE_FILE='/etc/freifunk-server-initdate'
 ###
 #
-#  Freifunk Dresden Server - Installation & Update Script
+#  Freifunk Ratzeburg Server - Installation & Update Script
 #
 ###
 
@@ -26,7 +26,7 @@ check_salt_repo() {
 }
 
 install_uci() {
-	DL_URL='https://download.freifunk-dresden.de/server/packages'
+	DL_URL='https://download.ratzeburg.freifunk.net/server/packages'
 
 	# # the pkg version must also be changed in uci/init.sls
 	libubox='libubox_20200227_amd64.deb'
@@ -76,7 +76,7 @@ print_not_supported_os() {
 
 print_init_notice() {
 	printf '%s#\n# Notice:%s\n' "$(tput bold)" "$(tput sgr0)"
-	printf ' * Please check your config options in /etc/config/ffdd\n'
+	printf ' * Please check your config options in /etc/config/ffrz\n'
 	printf ' * /etc/fastd/peers2/\n'
 	printf '   # add your first Fastd2 Connection:\n'
 	printf '   /etc/init.d/S53backbone-fastd2 add_connect <host> 5002\n'
@@ -104,7 +104,7 @@ version_id="$(grep -oP '(?<=^VERSION_ID=).+' /etc/os-release | tr -d '"')"
 
 
 #
-printf '### FFDD-Server - Initial Setup ###\n'
+printf '### FFRZ-Server - Initial Setup ###\n'
 
 while getopts ":hbd" opt "${@}"; do
 	case $opt in
@@ -277,32 +277,32 @@ fi
 
 # check basic uci options
 # check install_dir
-[ "$(uci -qX get ffdd.sys.install_dir)" != "$INSTALL_DIR" ] && uci set ffdd.sys.install_dir="$INSTALL_DIR"
+[ "$(uci -qX get ffrz.sys.install_dir)" != "$INSTALL_DIR" ] && uci set ffrz.sys.install_dir="$INSTALL_DIR"
 
 # check repo_url
-[ -z "$(uci -qX get ffdd.sys.freifunk_repo)" ] && uci set ffdd.sys.freifunk_repo="$REPO_URL"
+[ -z "$(uci -qX get ffrz.sys.freifunk_repo)" ] && uci set ffrz.sys.freifunk_repo="$REPO_URL"
 
 # check branch
 if [ -n "$OPT_BRANCH" ]; then
-	[ "$(uci -qX get ffdd.sys.branch)" != "$OPT_BRANCH" ] && uci set ffdd.sys.branch="$OPT_BRANCH"
+	[ "$(uci -qX get ffrz.sys.branch)" != "$OPT_BRANCH" ] && uci set ffrz.sys.branch="$OPT_BRANCH"
 else
 	# T_RELEASE_latest OR $CUSTOM_REV
-	[ "$(uci -qX get ffdd.sys.branch)" != "$REV" ] && uci set ffdd.sys.branch="$REV"
+	[ "$(uci -qX get ffrz.sys.branch)" != "$REV" ] && uci set ffrz.sys.branch="$REV"
 fi
 
 # check autoupdate
-[ "$(uci -qX get ffdd.sys.autoupdate)" == '' ] && uci set ffdd.sys.autoupdate='1'
+[ "$(uci -qX get ffrz.sys.autoupdate)" == '' ] && uci set ffrz.sys.autoupdate='1'
 if [ "$OPT_UPDATE" = '0' ]; then
 	# disable temporary autoupdate
-	tmp_au="$(uci -qX get ffdd.sys.autoupdate)"
-	uci set ffdd.sys.autoupdate='0'
+	tmp_au="$(uci -qX get ffrz.sys.autoupdate)"
+	uci set ffrz.sys.autoupdate='0'
 fi
 
 # check default Interface
-[ "$(uci -qX get ffdd.sys.ifname)" != "$def_if" ] && uci set ffdd.sys.ifname="$def_if"
+[ "$(uci -qX get ffrz.sys.ifname)" != "$def_if" ] && uci set ffrz.sys.ifname="$def_if"
 
 # ssh_pwauth
-[ "$(uci -qX get ffdd.sys.ssh_pwauth)" == '' ] && uci set ffdd.sys.ssh_pwauth='1'
+[ "$(uci -qX get ffrz.sys.ssh_pwauth)" == '' ] && uci set ffrz.sys.ssh_pwauth='1'
 #
 uci commit
 printf '\nOK.\n'
